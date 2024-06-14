@@ -8,10 +8,18 @@ defmodule JswatchWeb.IndigloManager do
 
   # debería hacer esto cuando se presiona el botón superior derecho, queremos hacer algo cuando esté sonando
   # la alarma
+
+  # debería de reiniciar la cuenta de la alarma, creo
   def handle_info(:"bottom-right-pressed", %{ui_pid: pid, st: AlarmOn} = state)do
     IO.inspect("hola, apaga la alarma porfa")
-    GenServer.cast(pid, :set_indiglo)
-    {:noreply, %{state | st: AlarmOff}}
+    GenServer.cast(pid, :unset_indiglo)
+    Process.send_after(self(), SnoozeCreo, 2000)
+    {:noreply, %{state | count: 51, timer: nil, st: AlarmOff}}
+  end
+
+  # Debería de hacer esto, cuando se presiona 2 segundos:
+  def handle_info(SnoozeCreo, %{} = state)do
+    IO.inspect("Presionado")
   end
 
   def handle_info(:"top-right-pressed", %{ui_pid: pid, st: IndigloOff} = state) do

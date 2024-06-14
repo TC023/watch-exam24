@@ -6,7 +6,15 @@ defmodule JswatchWeb.IndigloManager do
     {:ok, %{ui_pid: ui, st: IndigloOff, count: 0, timer1: nil}}
   end
 
+
+  def handle_info(:"bottom-right-pressed", %{ui_pid: pid, st: IndigloOff} = state)do
+    IO.inspect("hola")
+    GenServer.cast(pid, :set_indiglo)
+    {:noreply, %{state | st: IndigloOn}}
+  end
+
   def handle_info(:"top-right-pressed", %{ui_pid: pid, st: IndigloOff} = state) do
+    IO.inspect("hola???")
     GenServer.cast(pid, :set_indiglo)
     {:noreply, %{state | st: IndigloOn}}
   end
@@ -15,6 +23,7 @@ defmodule JswatchWeb.IndigloManager do
     timer = Process.send_after(self(), Waiting_IndigloOff, 2000)
     {:noreply, %{state | st: Waiting, timer1: timer}}
   end
+  
   def handle_info(:"top-left-pressed", state) do
     :gproc.send({:p, :l, :ui_event}, :update_alarm)
     {:noreply, state}
@@ -57,7 +66,7 @@ defmodule JswatchWeb.IndigloManager do
       {:noreply, %{state | count: 0, st: IndigloOff}}
     end
   end
-  
+
   def handle_info(AlarmOff_AlarmOn, %{ui_pid: pid, count: count, st: AlarmOff} = state) do
     if count >= 1 do
       Process.send_after(self(), AlarmOn_AlarmOff, 500)

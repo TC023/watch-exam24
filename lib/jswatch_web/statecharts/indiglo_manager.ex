@@ -13,14 +13,18 @@ defmodule JswatchWeb.IndigloManager do
   def handle_info(:"bottom-right-pressed", %{ui_pid: pid, st: AlarmOn} = state)do
     IO.inspect("hola, apaga la alarma porfa")
     GenServer.cast(pid, :unset_indiglo)
+
+    {:noreply, %{state | count: 51, timer1: nil, st: AlarmOff}}
+    # Esta línea de abajo debería de mandar el estado Snooze cuando se presiona el botón 2 segundos
     Process.send_after(self(), SnoozeCreo, 2000)
-    {:noreply, %{state | count: 51, timer: nil, st: AlarmOff}}
   end
 
+
   # Debería de hacer esto, cuando se presiona 2 segundos:
-  def handle_info(SnoozeCreo, %{} = state)do
+  def handle_info(SnoozeCreo, _state)do
     IO.inspect("Presionado")
   end
+
 
   def handle_info(:"top-right-pressed", %{ui_pid: pid, st: IndigloOff} = state) do
     IO.inspect("hola???")

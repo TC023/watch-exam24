@@ -56,8 +56,8 @@ defmodule JswatchWeb.IndigloManager do
       GenServer.cast(pid, :unset_indiglo)
       {:noreply, %{state | count: 0, st: IndigloOff}}
     end
-
   end
+  
   def handle_info(AlarmOff_AlarmOn, %{ui_pid: pid, count: count, st: AlarmOff} = state) do
     if count >= 1 do
       Process.send_after(self(), AlarmOn_AlarmOff, 500)

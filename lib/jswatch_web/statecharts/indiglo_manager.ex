@@ -6,11 +6,12 @@ defmodule JswatchWeb.IndigloManager do
     {:ok, %{ui_pid: ui, st: IndigloOff, count: 0, timer1: nil}}
   end
 
-
-  def handle_info(:"bottom-right-pressed", %{ui_pid: pid, st: IndigloOff} = state)do
+  # debería hacer esto cuando se presiona el botón superior derecho, queremos hacer algo cuando esté sonando
+  # la alarma
+  def handle_info(:"bottom-right-pressed", %{ui_pid: pid, alarm: alarm} = state)do
     IO.inspect("hola")
-    GenServer.cast(pid, :set_indiglo)
-    {:noreply, %{state | st: IndigloOn}}
+    # GenServer.cast(pid, :set_indiglo)
+    # {:noreply, %{state | st: IndigloOn}}
   end
 
   def handle_info(:"top-right-pressed", %{ui_pid: pid, st: IndigloOff} = state) do
@@ -23,7 +24,7 @@ defmodule JswatchWeb.IndigloManager do
     timer = Process.send_after(self(), Waiting_IndigloOff, 2000)
     {:noreply, %{state | st: Waiting, timer1: timer}}
   end
-  
+
   def handle_info(:"top-left-pressed", state) do
     :gproc.send({:p, :l, :ui_event}, :update_alarm)
     {:noreply, state}
